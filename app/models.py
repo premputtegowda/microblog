@@ -10,6 +10,8 @@ class User(UserMixin, db.Model):
     email = db.Column(db.String(128), unique = True, index = True)
     password_hash = db.Column(db.String(128))
     posts = db.relationship('Post', backref = 'author', lazy='dynamic')
+    about_me = db.Column(db.String(280))
+    last_seen = db.Column(db.DateTime(), default = datetime.utcnow)
 
 
     def __repr__(self):
@@ -35,6 +37,8 @@ class Post(db.Model):
     body = db.Column(db.String(280))
     timestamp = db.Column(db.DateTime(), index = True, default = datetime.utcnow)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    
+
 
     def __repr__(self):
         return '<Post {}>'.format(self.body)
