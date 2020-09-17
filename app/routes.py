@@ -19,23 +19,14 @@ def index():
     
     form = PostForm()
     if form.validate_on_submit():
-        body = form.post.data
-        post = Post(body,author=current_user)
+       
+        post = Post(body=form.post.data,author=current_user)
         db.session.add(post)
         db.session.commit()
         return redirect(url_for('login'))
-        posts = [
-        {
-            'author': {'username': 'John'},
-            'body': 'Beautiful day in Portland!'
-        },
-        {
-            'author': {'username': 'Susan'},
-            'body': 'The Avengers movie was so cool!'
-        }
-    ]
+    posts = current_user.followed_posts()
     
-    return render_template('index.html', title='Home' , posts = posts)
+    return render_template('index.html', title='Home' , form=form, posts = posts)
 
 @app.route('/login', methods = ['GET', 'POST'])
 def login():
