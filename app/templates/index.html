@@ -4,6 +4,19 @@
  {% block content %}
         <h1>Hi, {{current_user.username}}</h1>
 
+        <form action="" method='post'>
+            {{form.hidden_tag()}}
+
+            <p>
+            {{form.post.labee}}
+            {{form.post(col=32, rows=6)}}<br>
+            {% for error in form.post.errors%}
+                <span style="color: red;">{{ error }}</span>
+            {{ endfor }}
+            </p> 
+            <p> {{form.submit()}} </p>
+        </form>
+
         {% for post in posts%}
 
         <div>

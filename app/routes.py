@@ -5,28 +5,35 @@ from flask_login import login_user, current_user, logout_user, login_required
 
 from werkzeug.urls import url_parse
 from app import app, db
-from app.forms import LoginForm, RegistrationForm, EditProfileForm
-from app.models import User
+from app.forms import LoginForm, RegistrationForm, EditProfileForm, PostForm
+from app.models import User, Post
 @app.before_request
 def before_request():
     if current_user.is_authenticated:
         current_user.last_seen = datetime.utcnow()
         db.session.commit()
-@app.route('/')
-@app.route('/index')
+@app.route('/', methods = ['GET', 'POST'])
+@app.route('/index', methods = ['GET', 'POST'])
 @login_required
 def index():
     
-    posts= [
-        { 
+    form = PostForm()
+    if form.validate_on_submit():
+        body = form.post.data
+        post = Post(body,author=current_user)
+        db.session.add(post)
+        db.session.commit()
+        return redirect(url_for('login'))
+        posts = [
+        {
             'author': {'username': 'John'},
-            'body': 'Beautiful day in Portland'
+            'body': 'Beautiful day in Portland!'
         },
-        { 
-            'author': {'username': 'Suasan'},
-            'body': 'The Avengers movie was so cool'
+        {
+            'author': {'username': 'Susan'},
+            'body': 'The Avengers movie was so cool!'
         }
-        ]
+    ]
     
     return render_template('index.html', title='Home' , posts = posts)
 
